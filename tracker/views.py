@@ -9,7 +9,12 @@ from rest_framework import status
 @api_view(['GET', 'POST'])
 def all_transactions(request):
     if request.method =="GET":
-        qs =Transaction.objects.all()
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        if start_date and end_date:
+            qs =Transaction.objects.filter(date__range=[start_date, end_date])
+        else:
+            qs =Transaction.objects.all()
         serializer = TransactionSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
